@@ -1,0 +1,15 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+header {
+    display: flex;
+    border: solid red 2px;
+
+}
+#notelogo {
+    width: 140px;
+}
+.titleTab{
+
+}
