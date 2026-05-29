@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cadastro</title>
     <link rel="stylesheet" href="./css/design-cad.css">
 </head>
 <body>
@@ -14,5 +14,29 @@
             enterprise
         </div>
     </header>
+    <main>
+        <div class="entry">
+            <div class="entTitle">
+                <h2>Entrar</h2>
+            </div>
+            <form class="fromi">
+                <label for="nome">
+                    Nome <br>
+                    <input name="nome" type="text" id="nomeA" placeholder="Nome do Aluno">
+                </label> <br>
+                <label for="matricula">
+                    Matrícula <br>
+                    <input name="matricula" type="text" id="matriculaA" placeholder="Matrícula do Aluno">
+                </label>
+            </form>
+            <div class="entButton">
+                <button onclick="entra()" class="entButt">ENTRAR</button>
+            </div>
+            <div class="altLog">
+                Não tem uma conta?
+                <a href="#">Crie uma</a>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
