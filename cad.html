@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro</title>
+    <title>Suas Notas</title>
     <link rel="stylesheet" href="./css/design-cad.css">
+    <link rel="icon" type="img/png" href="./img/mainLogo.png">
 </head>
 <body>
     <header>
@@ -17,24 +18,34 @@
     <main>
         <div class="entry">
             <div class="entTitle">
-                <h2>Entrar</h2>
+                <h2>Cadastrar</h2>
             </div>
             <form class="fromi">
                 <label for="nome">
                     Nome <br>
                     <input name="nome" type="text" id="nomeA" placeholder="Nome do Aluno">
                 </label> <br>
-                <label for="matricula">
-                    Matrícula <br>
-                    <input name="matricula" type="text" id="matriculaA" placeholder="Matrícula do Aluno">
+                <label for="email">
+                    Email <br>
+                    <input name="email" type="email" id="emailA" placeholder="E-mail do Aluno">
                 </label>
+                <div class="formLine">
+                    <label for="date">
+                        Data de Nascimento <br>
+                        <input name="date" type="date" id="dtNasA" placeholder="Nascimento do Aluno" >
+                    </label>
+                    <label for="matricula">
+                        Matrícula <br>
+                        <input name="matricula" type="text" id="matriculaA" placeholder="Matrícula do Aluno">
+                    </label>
+                </div>
             </form>
             <div class="entButton">
-                <button onclick="entra()" class="entButt">ENTRAR</button>
+                <button onclick="entra()" class="entButt">CADASTRAR</button>
             </div>
             <div class="altLog">
-                Não tem uma conta?
-                <a href="#">Crie uma</a>
+                Já tem uma conta?
+                <a href="./ent.html">Entre</a>
             </div>
         </div>
     </main>

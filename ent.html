@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suas Notas</title>
+    <link rel="stylesheet" href="./css/design-cad.css">
+</head>
+<body>
+    <header>
+        <img src="./img/mainLogo.png" placeholder="Suas Notas.logo" id="notelogo">
+        <div class="titleTab">
+            <h1 class="title">Suas Notas</h1>
+            enterprise
+        </div>
+    </header>
+    <main>
+        <div class="entry">
+            <div class="entTitle">
+                <h2>Entrar</h2>
+            </div>
+            <form class="fromi">
+                <label for="nome">
+                    Nome <br>
+                    <input name="nome" type="text" id="nomeA" placeholder="Nome do Aluno">
+                </label> <br>
+                <label for="email">
+                    Email <br>
+                    <input name="email" type="email" id="emailA" placeholder="E-mail do Aluno">
+                </label>
+                <label for="matricula">
+                    Matrícula <br>
+                    <input name="matricula" type="text" id="matriculaA" placeholder="Matrícula do Aluno">
+                </label>
+            </form>
+            <div class="entButton">
+                <button onclick="entra()" class="entButt">ENTRAR</button>
+            </div>
+            <div class="altLog">
+                Não tem uma conta?
+                <a href="./cad.html">Crie uma</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
