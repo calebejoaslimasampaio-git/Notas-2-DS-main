@@ -25,6 +25,15 @@ header {
     font-size: 40px;
     order: 0;
 }
+.cadry {
+    width: var(--wid-entry);
+    margin-left: calc(50% - var(--wid-title));
+    margin-top: 75px;
+    border: solid red 2px;
+    border-radius: 7px;
+    background-color: #e0e0e0;
+    height: 344px;
+}
 .entry {
     width: var(--wid-entry);
     margin-left: calc(50% - var(--wid-title));
@@ -32,7 +41,7 @@ header {
     border: solid red 2px;
     border-radius: 7px;
     background-color: #e0e0e0;
-    height: 284px;
+    height: 224px;
 }
 .entButton {
     text-align: center;
