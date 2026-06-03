@@ -1,9 +1,10 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 :root {
-    --wid-title: 200px;
+    --wid-title: 250px;
     --wid-entry: 400px;
 }
 header {
@@ -90,4 +91,36 @@ header {
 .formLine {
     display: flex;
     justify-content:flex-start;
+}
+nav{
+    position: fixed;
+    background-color: #bdbdbd;
+    left: 0;
+    height: 100%;
+    width: 220px;
+    border-right: solid red 2px;
+    align-items: center;
+}
+.imp {
+    margin-left: 250px;
+}
+nav h1 {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+}
+nav a {
+    text-decoration: none;
+    color: inherit;
+}
+nav h1:hover{
+    cursor: pointer;
+    font-size: 31px;
+}
+nav img {
+    width: 30px;
+    margin-right: 20px;
+    margin-left: 30px;
 }

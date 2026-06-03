@@ -1,0 +1,4 @@
+await function entra(){
+    
+
+}

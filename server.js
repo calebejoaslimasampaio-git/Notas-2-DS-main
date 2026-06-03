@@ -57,7 +57,7 @@ app.post('/usuarios', (req, res) => {
 
     const query = `INSERT INTO usuarios (nome, matricula, escola, serie) VALUES (?, ?, ?, ?)`;
     
-    db.run(query, [nome, email], function(err) {
+    db.run(query, [nome, matricula, escola, serie], function(err) {
         if (err) {
             return res.status(400).json({ error: err.message });
         }
