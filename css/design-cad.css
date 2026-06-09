@@ -6,6 +6,8 @@
 :root {
     --wid-title: 250px;
     --wid-entry: 400px;
+    --wid-miores: 40%;
+    --wid-rankings: 20%;
 }
 header {
     display: flex;
@@ -93,16 +95,14 @@ header {
     justify-content:flex-start;
 }
 nav{
-    position: fixed;
+    position: absolute;
     background-color: #bdbdbd;
     left: 0;
     height: 100%;
     width: 220px;
     border-right: solid red 2px;
     align-items: center;
-}
-.imp {
-    margin-left: 250px;
+    padding-top: 30px;
 }
 nav h1 {
     margin-top: 20px;
@@ -123,4 +123,90 @@ nav img {
     width: 30px;
     margin-right: 20px;
     margin-left: 30px;
+}
+.home-main {
+    text-align: center;
+    margin-right: 86px;
+}
+.home-labels {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+#greet {
+    font-size: 41px;
+    margin-top: 41px;
+    margin-left: 25px;
+}
+.miores-all {
+    background-color: #f7f7f7;
+    margin-top: 82px;
+    width: var(--wid-miores);
+    height: 420px;
+    margin-left: calc(35% - (var(--wid-miores)/2));
+    border-radius: 16px;
+}
+.miores-title {
+    font-weight: bolder;
+    font-size: 27px;
+    background-color: #bdbdbd;
+    border-radius: 16px 16px 3px 3px;
+}
+.miores-notes {
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap ;
+}
+.miores-labele {
+    width: 41%;
+    margin-top: 12px;
+}
+.miores-label-title {
+    background-color: #cecece;
+    padding: 4px 0 4px 12px;
+    font-size: 19px;
+    text-align:left;
+}
+.miores-label-notas {
+    margin-top: 6px;
+}
+.miores-label-nota {
+    background-color: #e6e6e6;
+    padding: 6px 27px;
+    font-size: 19px;
+    display: flex;
+    justify-content: space-between;
+}
+.rankings-all {
+    background-color: #f7f7f7;
+    margin-top: 82px;
+    width: var(--wid-rankings);
+    height: 320px;
+    margin-left: calc(35% - (var(--wid-rankings)/2));
+    border-radius: 16px;
+}
+.rankings-title {
+    font-weight: bolder;
+    font-size: 27px;
+    background-color: #bdbdbd;
+    border-radius: 16px 16px 3px 3px;
+}
+.rankings-ranks {
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap ;
+}
+.rankings-rank {
+    background-color: #e6e6e6;
+    padding: 6px 27px;
+    margin-top: 16px;
+    font-size: 19px;
+    display: flex;
+    justify-content: space-between;
+}
+.rankings-rank span {
+    font-weight: bolder;
+    margin-right: 12px;
 }
