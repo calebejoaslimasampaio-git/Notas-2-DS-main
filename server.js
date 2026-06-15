@@ -1,12 +1,14 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para permitir o envio de JSON nas requisições
+// Middleware para permitir o envio de JSON nas requisições, liberando o B.D a aceitar as requisições de qualquer site
 app.use(express.json());
+app.use(cors());
 
 // -------------------------------------------------------------------------
 // Configuração e Conexão do Banco de Dados
@@ -24,21 +26,42 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 // Função para criar as tabelas iniciais, se não existirem
 function inicializarBanco() {
-    const query = `
+    const alunos = `
         CREATE TABLE IF NOT EXISTS alunos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             matricula TEXT UNIQUE NOT NULL,
-            escola TEXT NOT NULL,
-            serie TEXT NOT NULL
+            email TEXT UNIQUE,
+            serie TEXT NOT NULL,
+            turma TEXT NOT NULL,
+            senha text
         )
     `;
-    
-    db.run(query, (err) => {
+    db.run(alunos, (err) => {
         if (err) {
             console.error('Erro ao criar tabela:', err.message);
         } else {
             console.log('Tabela "alunos" verificada/criada com sucesso.');
+        }
+    });
+    const notas = `
+        CREATE TABLE IF NOT EXISTS notas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            aluno_matricula TEXT NOT NULL,
+            materia TEXT NOT NULL,
+            bimestre INTERGER NOT NULL,
+            nota_parcial REAL DEFAULT 0,
+            nota_bimestral REAL DEFAULT 0,
+            nota_qualitativa REAL DEFAULT 0,
+            FOREIGN KEY (aluno_matricula) REFERENCES alunos(matricula)
+        )
+    `;
+    
+    db.run(notas, (err) => {
+        if (err) {
+            console.error('Erro ao criar tabela:', err.message);
+        } else {
+            console.log('Tabela "notas" verificada/criada com sucesso.');
         }
     });
 }
@@ -48,16 +71,16 @@ function inicializarBanco() {
 // -------------------------------------------------------------------------
 
 // 1. Criar Usuário (POST)
-app.post('/usuarios', (req, res) => {
-    const { nome, matricula, escola, serie } = req.body;
+app.post('/alunos', (req, res) => {
+    const { nome, matricula, email, serie } = req.body;
     
-    if (!nome || !matricula || !escola || !serie) {
-        return res.status(400).json({ error: 'Nome e email são obrigatórios.' });
+    if (!nome || !matricula || !email || !serie) {
+        return res.status(400).json({ error: 'Todos os campos Nome, matricula, email e série são obrigatórios.' });
     }
 
-    const query = `INSERT INTO usuarios (nome, matricula, escola, serie) VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO alunos (nome, matricula, email, serie) VALUES (?, ?, ?, ?)`;
     
-    db.run(query, [nome, matricula, escola, serie], function(err) {
+    db.run(query, [nome, matricula, email, serie], function(err) {
         if (err) {
             return res.status(400).json({ error: err.message });
         }
@@ -65,15 +88,15 @@ app.post('/usuarios', (req, res) => {
             id: this.lastID,
             nome,
             matricula,
-            escola,
+            email,
             serie
         });
     });
 });
 
-// 2. Listar Todos os Usuários (GET)
-app.get('/usuarios', (req, res) => {
-    const query = `SELECT * FROM usuarios`;
+// 2. Listar Todos os alunos (GET)
+app.get('/alunos', (req, res) => {
+    const query = `SELECT * FROM alunos`;
     
     db.all(query, [], (err, rows) => {
         if (err) {
@@ -83,33 +106,33 @@ app.get('/usuarios', (req, res) => {
     });
 });
 
-// 3. Buscar Usuário por ID (GET)
-app.get('/usuarios/:id', (req, res) => {
-    const query = `SELECT * FROM usuarios WHERE id = ?`;
+// 3. Buscar aluno por ID (GET)
+app.get('/alunos/:id', (req, res) => {
+    const query = `SELECT * FROM alunos WHERE id = ?`;
     
     db.get(query, [req.params.id], (err, row) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
         if (!row) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
+            return res.status(404).json({ error: 'Aluno não encontrado.' });
         }
         res.json(row);
     });
 });
 
-// 4. Deletar Usuário (DELETE)
-app.delete('/usuarios/:id', (req, res) => {
-    const query = `DELETE FROM usuarios WHERE id = ?`;
+// 4. Deletar Aluno (DELETE)
+app.delete('/alunos/:id', (req, res) => {
+    const query = `DELETE FROM alunos WHERE id = ?`;
     
     db.run(query, [req.params.id], function(err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
         if (this.changes === 0) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
+            return res.status(404).json({ error: 'Aluno não encontrado.' });
         }
-        res.json({ message: 'Usuário deletado com sucesso.', rowsAffected: this.changes });
+        res.json({ message: 'Aluno deletado com sucesso.', rowsAffected: this.changes });
     });
 });
 
