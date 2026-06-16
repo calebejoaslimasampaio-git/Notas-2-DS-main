@@ -1,6 +1,80 @@
-await function entra(){
-    
+let alunos = [];
+API_URL = "http://localhost:3000";
 
+async function fetchUsers() {
+    try {
+        const response = await fetch(`${API_URL}/alunos`);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const result = await response.json();
+        alunos = result;
+        console.log(result); // Here is your SQLite data!
+
+    } catch (error) {
+        alunos = [];
+        console.error('There was a problem with the fetch operation:', error);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', fetchUsers);
+
+
+async function cadastro(){
+    const nome = document.getElementById('nomeA').value;
+    const email = document.getElementById('emailA').value;
+    const matricula = document.getElementById('matriculaA').value;
+    const senha = document.getElementById('senhaA').value;
+
+    if (!nome || !email || !matricula || !senha) {
+        alert('Preencha todos os campos, por favor!');
+        return;
+    }
+
+    const existingAluno = alunos.find(aluno => aluno.matricula === matricula);
+
+    try {
+        let response;
+
+        if (existingAluno) {
+            response = await fetch(`${API_URL}/alunos/${existingAluno.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, senha })
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(errorBody.error || 'Falha ao atualizar o aluno.');
+            }
+
+            alert('Aluno existente atualizado com sucesso!');
+        } else {
+            response = await fetch(`${API_URL}/alunos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nome, email, matricula, senha })
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(errorBody.error || 'Falha ao cadastrar o aluno.');
+            }
+
+            alert('Aluno cadastrado com sucesso!');
+        }
+
+        await fetchUsers();
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        alert(error.message);
+    }
 }
 
 

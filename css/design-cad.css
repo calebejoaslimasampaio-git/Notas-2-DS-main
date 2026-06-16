@@ -124,9 +124,15 @@ nav img {
     margin-right: 20px;
     margin-left: 30px;
 }
-.home-main {
+.home-main, .notes-main, .profile-main {
     text-align: center;
     margin-right: 86px;
+}
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    margin-left: 240px;
+    justify-content: start;
 }
 .home-labels {
     display: flex;
@@ -279,8 +285,53 @@ nav img {
     justify-content: space-around;
     width: 1000px;
     margin: 0 auto;
-    border: solid 2px red;
 }
 .notes-disciplines, .notes-parcial, .notes-bimestral, .notes-quali {
+    background-color: #c4e2c7;
     font-size: 20px;
+    border-radius: 17px;
+}
+.notes-discipline, .notes-parcialI, .notes-bimestralI, .notes-qualiI {
+    padding: 12px 28px;
+}
+.profile-picture {
+    width: 190px;
+    margin-top: 50px;
+    height: 190px;
+    border-radius: 27px;
+    background-color: #c4e2c7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profile-img {
+    width: 80%;
+    height: 80%;
+    border-radius: 27px;
+}
+.profile-info {
+    background-color: #c4e2c7;
+    width: 800px;
+    height: 170px;
+    margin-top: 50px;
+    padding: 20px 36px;
+    border-radius: 16px;
+}
+.profile-info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.profile-info-item strong {
+    font-size: 24px;
+}
+.profile-info-item span {
+    font-size: 22px;
+}
+.edit-button {
+    background-color: #f3e817;
+    border: none;
+    padding: 10px 30px;
+    font-size: 22px;
+    border-radius: 16px;
 }

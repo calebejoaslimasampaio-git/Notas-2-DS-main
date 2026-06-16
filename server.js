@@ -44,7 +44,7 @@ function inicializarBanco() {
             console.log('Tabela "alunos" verificada/criada com sucesso.');
         }
     });
-    const notas = `
+    const notas =   `
         CREATE TABLE IF NOT EXISTS notas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             aluno_matricula TEXT NOT NULL,
@@ -72,15 +72,15 @@ function inicializarBanco() {
 
 // 1. Criar Usuário (POST)
 app.post('/alunos', (req, res) => {
-    const { nome, matricula, email, serie } = req.body;
+    const { nome, matricula, email, serie, senha } = req.body;
     
-    if (!nome || !matricula || !email || !serie) {
-        return res.status(400).json({ error: 'Todos os campos Nome, matricula, email e série são obrigatórios.' });
+    if (!nome || !matricula || !email || !serie || !senha) {
+        return res.status(400).json({ error: 'Todos os campos Nome, matricula, email, série e senha são obrigatórios.' });
     }
 
-    const query = `INSERT INTO alunos (nome, matricula, email, serie) VALUES (?, ?, ?, ?)`;
+    const query = `INSERT INTO alunos (nome, matricula, email, serie, senha) VALUES (?, ?, ?, ?, ?)`;
     
-    db.run(query, [nome, matricula, email, serie], function(err) {
+    db.run(query, [nome, matricula, email, serie, senha], function(err) {
         if (err) {
             return res.status(400).json({ error: err.message });
         }
@@ -89,7 +89,8 @@ app.post('/alunos', (req, res) => {
             nome,
             matricula,
             email,
-            serie
+            serie,
+            senha
         });
     });
 });
@@ -133,6 +134,41 @@ app.delete('/alunos/:id', (req, res) => {
             return res.status(404).json({ error: 'Aluno não encontrado.' });
         }
         res.json({ message: 'Aluno deletado com sucesso.', rowsAffected: this.changes });
+    });
+});
+
+// 5. Atualizar Aluno (PATCH)
+app.patch('/alunos/:id', (req, res) => {
+    const { email, senha } = req.body;
+
+    if (!email && !senha) {
+        return res.status(400).json({ error: 'Informe pelo menos email ou senha para atualizar.' });
+    }
+
+    const updates = [];
+    const values = [];
+
+    if (email) {
+        updates.push('email = ?');
+        values.push(email);
+    }
+    if (senha) {
+        updates.push('senha = ?');
+        values.push(senha);
+    }
+
+    values.push(req.params.id);
+
+    const query = `UPDATE alunos SET ${updates.join(', ')} WHERE id = ?`;
+
+    db.run(query, values, function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Aluno não encontrado.' });
+        }
+        res.json({ message: 'Aluno atualizado com sucesso.', rowsAffected: this.changes });
     });
 });
 
