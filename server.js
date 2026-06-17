@@ -6,14 +6,14 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para permitir o envio de JSON nas requisições, liberando o B.D a aceitar as requisições de qualquer site
+// Middleware para permitir o envio de JSON nas requisições e liberar o CORS
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname)));
 
 // -------------------------------------------------------------------------
 // Configuração e Conexão do Banco de Dados
 // -------------------------------------------------------------------------
-// Cria ou abre o arquivo 'database.sqlite' na raiz do projeto
 const dbPath = path.resolve(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
@@ -26,7 +26,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 // Função para criar as tabelas iniciais, se não existirem
 function inicializarBanco() {
-    const alunos = `
+    const queryAlunos = `
         CREATE TABLE IF NOT EXISTS alunos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
@@ -34,141 +34,168 @@ function inicializarBanco() {
             email TEXT UNIQUE,
             serie TEXT NOT NULL,
             turma TEXT NOT NULL,
-            senha text
+            senha TEXT
         )
     `;
-    db.run(alunos, (err) => {
-        if (err) {
-            console.error('Erro ao criar tabela:', err.message);
-        } else {
-            console.log('Tabela "alunos" verificada/criada com sucesso.');
-        }
-    });
-    const notas =   `
+
+    const queryNotas = `
         CREATE TABLE IF NOT EXISTS notas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             aluno_matricula TEXT NOT NULL,
             materia TEXT NOT NULL,
-            bimestre INTERGER NOT NULL,
+            bimestre INTEGER NOT NULL,
             nota_parcial REAL DEFAULT 0,
             nota_bimestral REAL DEFAULT 0,
             nota_qualitativa REAL DEFAULT 0,
             FOREIGN KEY (aluno_matricula) REFERENCES alunos(matricula)
         )
     `;
-    
-    db.run(notas, (err) => {
+
+    db.run(queryAlunos, (err) => {
         if (err) {
-            console.error('Erro ao criar tabela:', err.message);
+            console.error('Erro ao criar tabela alunos:', err.message);
         } else {
-            console.log('Tabela "notas" verificada/criada com sucesso.');
+            console.log('Tabela "alunos" verificada/criada com sucesso.');
+            
+            db.run(queryNotas, (err) => {
+                if (err) {
+                    console.error('Erro ao criar tabela notas:', err.message);
+                } else {
+                    console.log('Tabela "notas" verificada/criada com sucesso.');
+                    alimentarDadosDosDevs();
+                }
+            });
         }
     });
 }
 
-// -------------------------------------------------------------------------
-// Rotas da API (CRUD Exemplo)
-// -------------------------------------------------------------------------
-
-// 1. Criar Usuário (POST)
-app.post('/alunos', (req, res) => {
-    const { nome, matricula, email, serie, senha } = req.body;
+function alimentarDadosDosDevs() {
+    const sqlAlunos = `INSERT OR IGNORE INTO alunos (matricula, nome, serie, turma) VALUES (?, ?, ?, ?)`;
     
-    if (!nome || !matricula || !email || !serie || !senha) {
-        return res.status(400).json({ error: 'Todos os campos Nome, matricula, email, série e senha são obrigatórios.' });
+    db.run(sqlAlunos, ['3782655', 'ADRIEL ALVES DA SILVA', '2º', 'A']);
+    db.run(sqlAlunos, ['3722975', 'ADRYAN MARIANO DOS SANTOS', '2º', 'A']);
+    db.run(sqlAlunos, ['5165690', 'ALANA SARA COSTA SILVA', '2º', 'A']);
+    db.run(sqlAlunos, ['3761480', 'ALEJANDRO RAYNAN DE LIMA SILVA', '2º', 'A']);
+    db.run(sqlAlunos, ['3523576', 'ALESSANDRA LIMA DOS SANTOS', '2º', 'A']);
+    db.run(sqlAlunos, ['3749299', 'ANNA ESTHER LIMA DE SOUZA', '2º', 'A']);
+    db.run(sqlAlunos, ['3739233', 'CALEBE JOAS LIMA SAMPAIO', '2º', 'A']);
+    db.run(sqlAlunos, ['5311318', 'DEBORA VIANA DE QUEIROZ', '2º', 'A']);
+    db.run(sqlAlunos, ['5164361', 'ELLEN NOGUEIRA LIMA', '2º', 'A']);
+    db.run(sqlAlunos, ['5130871', 'EMILY MARIA OLIVEIRA SILVA', '2º', 'A']);
+    db.run(sqlAlunos, ['4915098', 'ENZO ADRIEL GOMES DA SILVA', '2º', 'A']);
+    db.run(sqlAlunos, ['4695967', 'EVELINE AMBROSIO SOUZA', '2º', 'A']);
+    db.run(sqlAlunos, ['3554613', 'EVELYN ARAUJO BEZERRA', '2º', 'A']);
+    db.run(sqlAlunos, ['3812062', 'FABRICIO GOMES PEREIRA', '2º', 'A']);
+    db.run(sqlAlunos, ['5416950', 'FELIPE MORAIS DE FREITAS', '2º', 'A']);
+    db.run(sqlAlunos, ['5418347', 'FILIPE GABRIEL DIAS RODRIGUES', '2º', 'A']);
+    db.run(sqlAlunos, ['4711308', 'GUSTAVO DOS SANTOS LIMA', '2º', 'A']);
+    db.run(sqlAlunos, ['4709416', 'IAGO GIOVANNI OLIVEIRA SANTOS', '2º', 'A']);
+    db.run(sqlAlunos, ['4547993', 'IOHANNA JULIA DA SILVA NOGUEIRA', '2º', 'A']);
+    db.run(sqlAlunos, ['5411389', 'ISAAC GOYANA BARRETO', '2º', 'A']);
+
+   
+    const sqlNotas = `INSERT INTO notas (aluno_matricula, materia, bimestre, nota_parcial, nota_bimestral, nota_qualitativa) 
+                      SELECT ?, ?, ?, ?, ?, ? WHERE NOT EXISTS 
+                      (SELECT 1 FROM notas WHERE aluno_matricula = ? AND materia = ? AND bimestre = ?)`;
+    
+    // Função auxiliar para inserir notas sem duplicar ao reiniciar o servidor
+    function cadastrarNota(matr, mat, bim, p, b, q) {
+        db.run(sqlNotas, [matr, mat, bim, p, b, q, matr, mat, bim]);
     }
 
-    const query = `INSERT INTO alunos (nome, matricula, email, serie, senha) VALUES (?, ?, ?, ?, ?)`;
-    
-    db.run(query, [nome, matricula, email, serie, senha], function(err) {
-        if (err) {
-            return res.status(400).json({ error: err.message });
+    // Notas - Adryan Mariano (Bimestre 1)
+    cadastrarNota('3722975', 'Matemática', 1, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'História', 1, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Geografia', 1, 5.0, 6.5, 1.0);
+    cadastrarNota('3722975', 'Sociologia', 1, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'Biologia', 1, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Progamação Web', 1, 5.0, 6.5, 1.0);
+
+    // Notas - Adryan Mariano (Bimestre 2)
+    cadastrarNota('3722975', 'Matemática', 2, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'História', 2, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Geografia', 2, 5.0, 6.5, 1.0);
+    cadastrarNota('3722975', 'Sociologia', 2, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'Biologia', 2, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Progamação Web', 2, 5.0, 6.5, 1.0);
+
+    // Notas - Adryan Mariano (Bimestre 3)
+    cadastrarNota('3722975', 'Matemática', 3, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'História', 3, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Geografia', 3, 5.0, 6.5, 1.0);
+    cadastrarNota('3722975', 'Sociologia', 3, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'Biologia', 3, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Progamação Web', 3, 5.0, 6.5, 1.0);
+
+    // Notas - Adryan Mariano (Bimestre 4)
+    cadastrarNota('3722975', 'Matemática', 4, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'História', 4, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Geografia', 4, 5.0, 6.5, 1.0);
+    cadastrarNota('3722975', 'Sociologia', 4, 7.5, 8.0, 2.0);
+    cadastrarNota('3722975', 'Biologia', 4, 9.0, 7.0, 1.5);
+    cadastrarNota('3722975', 'Progamação Web', 4, 5.0, 6.5, 1.0);
+
+    console.log('Banco de dados alimentado manualmente pelos Devs.');
+}
+
+// -------------------------------------------------------------------------
+// Rotas da API (Fluxo do Aluno no Site)
+// -------------------------------------------------------------------------
+
+app.post('/api/cadastro', (req, res) => {
+    const { matricula, nome, email, serie, turma, senha } = req.body;
+
+    if (!matricula || !nome || !email || !serie || !turma || !senha) {
+        return res.status(400).json({ error: 'Todos os campos (Matrícula, Nome, Email, Série, Turma e Senha) são obrigatórios.' });
+    }
+
+    db.get('SELECT * FROM alunos WHERE matricula = ?', [matricula], (err, aluno) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!aluno) return res.status(400).json({ error: 'Matrícula não encontrada no sistema escolar.' });
+        
+        if (aluno.nome.toLowerCase() !== nome.toLowerCase()) {
+            return res.status(400).json({ error: 'O nome informado não coincide com o desta matrícula.' });
         }
-        res.status(201).json({
-            id: this.lastID,
-            nome,
-            matricula,
-            email,
-            serie,
-            senha
+
+        if (aluno.senha) return res.status(400).json({ error: 'Este aluno já possui uma conta ativa.' });
+
+        const sqlUpdate = `UPDATE alunos SET email = ?, serie = ?, turma = ?, senha = ? WHERE matricula = ?`;
+        db.run(sqlUpdate, [email, serie, turma, senha, matricula], (err) => {
+            if (err) return res.status(400).json({ error: 'Erro ao salvar: E-mail já cadastrado por outro usuário.' });
+            res.json({ message: 'Conta criada com sucesso! Prossiga para o Login.' });
         });
     });
 });
 
-// 2. Listar Todos os alunos (GET)
-app.get('/alunos', (req, res) => {
-    const query = `SELECT * FROM alunos`;
-    
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows);
-    });
-});
+app.post('/api/login', (req, res) => {
+    const { identificador, senha } = req.body;
 
-// 3. Buscar aluno por ID (GET)
-app.get('/alunos/:id', (req, res) => {
-    const query = `SELECT * FROM alunos WHERE id = ?`;
-    
-    db.get(query, [req.params.id], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        if (!row) {
-            return res.status(404).json({ error: 'Aluno não encontrado.' });
-        }
-        res.json(row);
-    });
-});
-
-// 4. Deletar Aluno (DELETE)
-app.delete('/alunos/:id', (req, res) => {
-    const query = `DELETE FROM alunos WHERE id = ?`;
-    
-    db.run(query, [req.params.id], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        if (this.changes === 0) {
-            return res.status(404).json({ error: 'Aluno não encontrado.' });
-        }
-        res.json({ message: 'Aluno deletado com sucesso.', rowsAffected: this.changes });
-    });
-});
-
-// 5. Atualizar Aluno (PATCH)
-app.patch('/alunos/:id', (req, res) => {
-    const { email, senha } = req.body;
-
-    if (!email && !senha) {
-        return res.status(400).json({ error: 'Informe pelo menos email ou senha para atualizar.' });
+    if (!identificador || !senha) {
+        return res.status(400).json({ error: 'Preencha todos os campos obrigatórios.' });
     }
 
-    const updates = [];
-    const values = [];
+    const sqlLogin = `SELECT * FROM alunos WHERE (matricula = ? OR email = ?) AND senha = ?`;
+    
+    db.get(sqlLogin, [identificador, identificador, senha], (err, aluno) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!aluno) return res.status(401).json({ error: 'Credenciais incorretas ou conta ainda não cadastrada.' });
 
-    if (email) {
-        updates.push('email = ?');
-        values.push(email);
-    }
-    if (senha) {
-        updates.push('senha = ?');
-        values.push(senha);
-    }
+        const sqlNotas = `SELECT materia, bimestre, nota_parcial, nota_bimestral, nota_qualitativa FROM notas WHERE aluno_matricula = ?`;
+        
+        db.all(sqlNotas, [aluno.matricula], (err, notas) => {
+            if (err) return res.status(500).json({ error: err.message });
 
-    values.push(req.params.id);
-
-    const query = `UPDATE alunos SET ${updates.join(', ')} WHERE id = ?`;
-
-    db.run(query, values, function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        if (this.changes === 0) {
-            return res.status(404).json({ error: 'Aluno não encontrado.' });
-        }
-        res.json({ message: 'Aluno atualizado com sucesso.', rowsAffected: this.changes });
+            res.json({
+                message: 'Login realizado com sucesso!',
+                aluno: {
+                    nome: aluno.nome,
+                    matricula: aluno.matricula,
+                    serie: aluno.serie,
+                    turma: aluno.turma,
+                    boletim: notas 
+                }
+            });
+        });
     });
 });
 
@@ -179,7 +206,6 @@ app.listen(PORT, () => {
     console.log(`Servidor rodando na porta http://localhost:${PORT}`);
 });
 
-// Fechar a conexão do banco de dados quando o app for encerrado
 process.on('SIGINT', () => {
     db.close((err) => {
         if (err) {
