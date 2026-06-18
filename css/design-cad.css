@@ -258,14 +258,25 @@ nav img {
     margin-right: 28px;
     border-radius: 16px;
 }
+.notas-bimestre:hover {
+    cursor: pointer;
+    background-color: hsl(88, 45%, 81%);
+    transition: 200ms;
+}
 .notas-bimestre-current {
-    background-color: #f3e817;
+    background-color: #f0e746;
     border: none;
     padding: 10px 30px;
     font-size: 22px;
     margin-right: 28px;
     border-radius: 16px;
 }
+.notas-bimestre-current:hover {
+    cursor: default;
+    background-color: #faf374;
+    transition: 200ms;
+}
+
 .notes-table-title {
     display: flex;
     justify-content: space-around;

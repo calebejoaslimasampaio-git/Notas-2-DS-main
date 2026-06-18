@@ -65,22 +65,21 @@ function inicializarBanco() {
         }
     });
 }
-
 // -------------------------------------------------------------------------
 // Rotas da API (CRUD Exemplo)
 // -------------------------------------------------------------------------
 
 // 1. Criar Usuário (POST)
 app.post('/alunos', (req, res) => {
-    const { nome, matricula, email, serie, senha } = req.body;
+    const { nome, matricula, serie, turma } = req.body;
     
-    if (!nome || !matricula || !email || !serie || !senha) {
-        return res.status(400).json({ error: 'Todos os campos Nome, matricula, email, série e senha são obrigatórios.' });
+    if (!nome || !matricula || !serie || !turma ) {
+        return res.status(400).json({ error: 'Todos os campos Nome, matricula, série e turma são obrigatórios.' });
     }
 
-    const query = `INSERT INTO alunos (nome, matricula, email, serie, senha) VALUES (?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO alunos (nome, matricula, serie, turma) VALUES (?, ?, ?, ?)`;
     
-    db.run(query, [nome, matricula, email, serie, senha], function(err) {
+    db.run(query, [nome, matricula, serie, turma], function(err) {
         if (err) {
             return res.status(400).json({ error: err.message });
         }
@@ -88,9 +87,8 @@ app.post('/alunos', (req, res) => {
             id: this.lastID,
             nome,
             matricula,
-            email,
             serie,
-            senha
+            turma
         });
     });
 });

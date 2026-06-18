@@ -19,8 +19,24 @@ async function fetchUsers() {
     }
 }
 
+carregarAluno1();
 window.addEventListener('DOMContentLoaded', fetchUsers);
 
+async function carregarAluno1() {
+    try {
+        let response;
+
+        response = await fetch(`${API_URL}/alunos`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome: "Aluno 1", matricula: "12345", serie: "1º Ano", turma: "Des. Sistemas" })
+        });
+    } catch (error) {
+        console.error('Erro ao carregar aluno 1:', error);
+    }
+}
 
 async function cadastro(){
     const nome = document.getElementById('nomeA').value;
@@ -77,6 +93,19 @@ async function cadastro(){
     }
 }
 
+function changeBimestre(bimestre) {
+    const current = document.querySelector('.notas-bimestre-current');
+    if (current) {
+        current.classList.remove('notas-bimestre-current');
+        current.classList.add('notas-bimestre');
+    }
+
+    const target = document.getElementById(`bim${bimestre}`);
+    if (target) {
+        target.classList.remove('notas-bimestre');
+        target.classList.add('notas-bimestre-current');
+    }
+}
 
 
 
